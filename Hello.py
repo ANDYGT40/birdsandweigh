@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 # import plotly.express as px
 from datetime import datetime
+from st_files_connection import FilesConnection
+# Create connection object and retrieve file contents.
+# Specify input format is a csv and to cache the result for 600 seconds.
+conn = st.connection('gcs', type=FilesConnection)
 
 #Setup:
 # Get today's date & time
@@ -15,7 +19,8 @@ d_string = date.strftime("%d-%m-%Y")
 df = pd.DataFrame()
 edited_df = pd.DataFrame()
 if "df" not in st.session_state:
-    st.session_state.df = pd.read_csv("data.csv",index_col=False)
+    # st.session_state.df = pd.read_csv("data.csv",index_col=False)
+    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
 st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 
 
@@ -48,6 +53,8 @@ def display_plot(data):
     # st.plotly_chart(fig)
     st.line_chart(data, x="Date & Time", y=["BB", "Bowie"])
 
+st.title(":hatched_chick: Birds&Weigh :baby_chick:")
+
 #Containers
 col1, col2 = st.columns(2)
 #Display
@@ -75,6 +82,9 @@ with col2:
     st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
     st.write(f"Today's date: {d_string}")
     st.dataframe(st.session_state.df[-7:])
+    maxBB = st.session_state.df.max()["BB"]
+    maxBowie = st.session_state.df.max()["Bowie"]
+    st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
 
 
 #Below columns
@@ -88,8 +98,14 @@ ts = st.session_state.df.set_index('Date & Time')
 morn = ts.between_time('0:00','12:00')
 night = ts.between_time('12:00','23:00')
 st.write("### Morning")
+maxMornBB = morn.max()["BB"]
+maxMornBowie = morn.max()["Bowie"]
+st.write(f"Max morning weight BB:{maxMornBB}, Bowie:{maxMornBowie}")
 st.line_chart(morn,y=["BB", "Bowie"])
 st.write("### Night")
+maxNightBB = night.max()["BB"]
+maxNightBowie = night.max()["Bowie"]
+st.write(f"Max night weight BB:{maxNightBB}, Bowie:{maxNightBowie}")
 st.line_chart(night,y=["BB", "Bowie"])
 
 with st.expander("### Full Dataset (EDITABLE) **not working"):
@@ -97,6 +113,7 @@ with st.expander("### Full Dataset (EDITABLE) **not working"):
 
 #####
 # Features to add:
+#   Connect to google sheets
 #   Display warning if consecutive measurements are dropping 
 #   Calculate and show trend
 #   Full editable dataset (hidden) 
