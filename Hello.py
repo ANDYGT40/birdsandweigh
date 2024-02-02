@@ -1,51 +1,105 @@
-# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import streamlit as st
-from streamlit.logger import get_logger
+import pandas as pd
+# import plotly.express as px
+from datetime import datetime
 
-LOGGER = get_logger(__name__)
-
-
-def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-    )
-
-    st.write("# Welcome to Streamlit! 👋")
-
-    st.sidebar.success("Select a demo above.")
-
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
+#Setup:
+# Get today's date & time
+date = datetime.now()
+dt_iso = date.isoformat()
+dt_string = date.strftime("%Y-%m-%d %H:%M:%S")
+t_string = date.strftime("%H:%M")
+d_string = date.strftime("%d-%m-%Y")
+# df = pd.DataFrame.empty
+# Get data from csv
+df = pd.DataFrame()
+edited_df = pd.DataFrame()
+if "df" not in st.session_state:
+    st.session_state.df = pd.read_csv("data.csv",index_col=False)
+st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 
 
-if __name__ == "__main__":
-    run()
+
+#Functions:
+# Function to add a new row to the DataFrame
+def addRow(date, field1, field2, oldTable):
+    newRow = pd.DataFrame([[date, field1, field2]], columns=["Date & Time", "BB", "Bowie"])
+    st.session_state.df = pd.concat([oldTable, newRow], ignore_index=True)
+    st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) 
+
+# Function to save the DataFrame to a CSV file
+def save_to_csv(dfToSave):
+    if not dfToSave.empty:
+        dfToSave.to_csv("data.csv", index=False, encoding="utf-8")
+        st.warning("Data saved to data.csv")
+    # Display a link to download the CSV file
+        st.download_button(
+            label="Download CSV",
+            data=df.to_csv(index=False).encode('utf-8'),
+            file_name='data.csv',
+            mime='text/csv',
+        )
+    else:
+        st.warning('DataFrame Empty!')
+        
+
+def display_plot(data):
+    # fig = px.line(data, x="Date & Time", y=["BB", "Bowie"], range_y=[0, 100])
+    # st.plotly_chart(fig)
+    st.line_chart(data, x="Date & Time", y=["BB", "Bowie"])
+
+#Containers
+col1, col2 = st.columns(2)
+#Display
+with col1:
+    st.write("### Data Input")
+    with st.form("addRow_form"):
+        date = st.text_input("Date & Time", value=dt_string)
+        field1 = st.number_input("BB")
+        field2 = st.number_input("Bowie")
+        submitButton = st.form_submit_button("Add Row")
+        deleteButton = st.form_submit_button("Delete last row")
+    if submitButton:# # Add fields to data table and display the added fields
+        addRow(date, field1, field2, st.session_state.df)
+        st.warning(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
+    if deleteButton:
+        st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset: ")
+        st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
+
+
+# st.write(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
+with col2:
+    st.write("### Data Table")
+    st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
+    st.write(f"Today's date: {d_string}")
+    st.dataframe(st.session_state.df[-7:])
+#Below columns
+st.write("### All Measurements")
+display_plot(st.session_state.df)
+#st.write(st.session_state.df.dtypes) #Check Types
+
+#split data into morning and night
+ts = st.session_state.df.set_index('Date & Time')
+#st.write(ts.dtypes) #Check Types
+morn = ts.between_time('0:00','12:00')
+night = ts.between_time('12:00','23:00')
+st.write("### Morning")
+st.line_chart(morn,y=["BB", "Bowie"])
+st.write("### Night")
+st.line_chart(night,y=["BB", "Bowie"])
+
+# Sidebar
+with st.sidebar:
+
+    # Button to save the edited data to a CSV file
+    if st.button(label="Save to CSV"):
+        save_to_csv(st.session_state.df)
+with st.expander("### Full Dataset (EDITABLE) **not working"):
+    st.data_editor(st.session_state.df, num_rows="dynamic")
+
+#####
+# Features to add:
+#   Show only morning measurements
+#       Make sure 'Date & Time' col is date format
+#       axis=0 or make 'Date & Time' index      
+#   Full editable dataset (hidden) 
