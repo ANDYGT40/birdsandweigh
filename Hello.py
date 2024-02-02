@@ -65,7 +65,9 @@ with col1:
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset: ")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
-
+# Button to save the edited data to a CSV file
+    if st.button(label="Save to CSV", type="primary"):
+        save_to_csv(st.session_state.df)
 
 # st.write(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
 with col2:
@@ -73,6 +75,8 @@ with col2:
     st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
     st.write(f"Today's date: {d_string}")
     st.dataframe(st.session_state.df[-7:])
+
+
 #Below columns
 st.write("### All Measurements")
 display_plot(st.session_state.df)
@@ -88,18 +92,11 @@ st.line_chart(morn,y=["BB", "Bowie"])
 st.write("### Night")
 st.line_chart(night,y=["BB", "Bowie"])
 
-# Sidebar
-with st.sidebar:
-
-    # Button to save the edited data to a CSV file
-    if st.button(label="Save to CSV"):
-        save_to_csv(st.session_state.df)
 with st.expander("### Full Dataset (EDITABLE) **not working"):
     st.data_editor(st.session_state.df, num_rows="dynamic")
 
 #####
 # Features to add:
-#   Show only morning measurements
-#       Make sure 'Date & Time' col is date format
-#       axis=0 or make 'Date & Time' index      
+#   Display warning if consecutive measurements are dropping 
+#   Calculate and show trend
 #   Full editable dataset (hidden) 
