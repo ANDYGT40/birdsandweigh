@@ -19,8 +19,8 @@ d_string = date.strftime("%d-%m-%Y")
 df = pd.DataFrame()
 edited_df = pd.DataFrame()
 if "df" not in st.session_state:
-    # st.session_state.df = pd.read_csv("data.csv",index_col=False)
-    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
+    st.session_state.df = pd.read_csv("data.csv",index_col=False)
+    #st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
 st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 
 
