@@ -35,9 +35,9 @@ def addRow(date, field1, field2, oldTable):
 # Function to save the DataFrame to a CSV file
 def save_to_csv(dfToSave):
     if not dfToSave.empty:
-        with conn.open("birdsandweighbucket/data.csv", "wt") as f:
-            f.write(dfToSave)
-        # dfToSave.conn.open("birdsandweighbucket/data.csv", index=False, encoding="utf-8")
+        #with conn.open("birdsandweighbucket/data.csv", "wt") as f:
+        #    f.write(dfToSave)
+        dfToSave.conn.write("birdsandweighbucket/data.csv", index=False, encoding="utf-8")
         st.warning("Data saved to data.csv")
     # Display a link to download the CSV file
         st.download_button(
