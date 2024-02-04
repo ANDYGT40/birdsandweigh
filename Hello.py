@@ -3,9 +3,10 @@ import pandas as pd
 # import plotly.express as px
 from datetime import datetime
 from st_files_connection import FilesConnection
+import gcsfs as gcsfs
 # Create connection object and retrieve file contents.
 # Specify input format is a csv and to cache the result for 600 seconds.
-conn = st.connection('gcs', type=FilesConnection)
+conn = st.experimental_connection('gcs', type=FilesConnection)
 
 #Setup:
 # Get today's date & time
@@ -19,8 +20,8 @@ d_string = date.strftime("%d-%m-%Y")
 df = pd.DataFrame()
 edited_df = pd.DataFrame()
 if "df" not in st.session_state:
-    st.session_state.df = pd.read_csv("data.csv",index_col=False)
-    #st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
+    # st.session_state.df = pd.read_csv("data.csv",index_col=False)
+    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
 st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 
 
@@ -35,7 +36,10 @@ def addRow(date, field1, field2, oldTable):
 # Function to save the DataFrame to a CSV file
 def save_to_csv(dfToSave):
     if not dfToSave.empty:
-        dfToSave.to_csv("birdsandweighbucket/data.csv", index=False, encoding="utf-8")
+        # dfToSave.to_csv("data.csv", index=False, encoding="utf-8") #Save local csv
+        # conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
+        with conn.open("birdsandweighbucket/data.csv", "wt") as f:
+            dfToSave.to_csv(f, index=False)
         st.warning("Data saved to data.csv")
     # Display a link to download the CSV file
         st.download_button(
@@ -113,7 +117,6 @@ with st.expander("### Full Dataset (EDITABLE) **not working"):
 
 #####
 # Features to add:
-#   Connect to google sheets
 #   Display warning if consecutive measurements are dropping 
 #   Calculate and show trend
 #   Full editable dataset (hidden) 
