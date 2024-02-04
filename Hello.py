@@ -4,13 +4,14 @@ import pandas as pd
 from datetime import datetime
 from st_files_connection import FilesConnection
 import gcsfs as gcsfs
+import pytz as pytz
 # Create connection object and retrieve file contents.
 # Specify input format is a csv and to cache the result for 600 seconds.
-conn = st.experimental_connection('gcs', type=FilesConnection)
+conn = st.connection('gcs', type=FilesConnection)
 
 #Setup:
 # Get today's date & time
-date = datetime.now()
+date = datetime.now(pytz.timezone('Australia/Melbourne'))
 dt_iso = date.isoformat()
 dt_string = date.strftime("%Y-%m-%d %H:%M:%S")
 t_string = date.strftime("%H:%M")
@@ -44,7 +45,7 @@ def save_to_csv(dfToSave):
     # Display a link to download the CSV file
         st.download_button(
             label="Download CSV",
-            data=df.to_csv(index=False).encode('utf-8'),
+            data=dfToSave.to_csv(index=False).encode('utf-8'),
             file_name='data.csv',
             mime='text/csv',
         )
