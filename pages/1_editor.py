@@ -21,8 +21,8 @@ def save_to_csv(dfToSave):
             dfToSave.to_csv(f, index=False)
     st.warning("Edited data saved to data.csv")
 def refresh():
-    # st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
-    st.session_state.df = pd.read_csv("data.csv",index_col=False)
+    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
+    # st.session_state.df = pd.read_csv("data.csv",index_col=False)
 
 edited_df = st.data_editor(st.session_state.df, num_rows="dynamic", use_container_width=True)
 # Button to save the edited data to a CSV file
