@@ -6,7 +6,6 @@ from st_files_connection import FilesConnection
 import gcsfs as gcsfs
 import pytz as pytz
 # Create connection object and retrieve file contents.
-# Specify input format is a csv and to cache the result for 600 seconds.
 conn = st.connection('gcs', type=FilesConnection)
 
 #Setup:
@@ -22,25 +21,27 @@ df = pd.DataFrame()
 edited_df = pd.DataFrame()
 if "df" not in st.session_state:
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
-    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
+    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
 st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 
-
-
+def refresh():
+    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
+    # st.session_state.df = pd.read_csv("data.csv",index_col=False)
 #Functions:
 # Function to add a new row to the DataFrame
 def addRow(date, field1, field2, oldTable):
     newRow = pd.DataFrame([[date, field1, field2]], columns=["Date & Time", "BB", "Bowie"])
     st.session_state.df = pd.concat([oldTable, newRow], ignore_index=True)
     st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) 
-
+    # st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
 # Function to save the DataFrame to a CSV file
 def save_to_csv(dfToSave):
     if not dfToSave.empty:
         # dfToSave.to_csv("data.csv", index=False, encoding="utf-8") #Save local csv
-        # conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
+        conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
         with conn.open("birdsandweighbucket/data.csv", "wt") as f:
             dfToSave.to_csv(f, index=False)
+        
         st.warning("Data saved to data.csv")
     # Display a link to download the CSV file
         st.download_button(
@@ -113,11 +114,9 @@ maxNightBowie = night.max()["Bowie"]
 st.write(f"Max night weight BB:{maxNightBB}, Bowie:{maxNightBowie}")
 st.line_chart(night,y=["BB", "Bowie"])
 
-with st.expander("### Full Dataset (EDITABLE) **not working"):
-    st.data_editor(st.session_state.df, num_rows="dynamic")
+
 
 #####
 # Features to add:
 #   Display warning if consecutive measurements are dropping 
 #   Calculate and show trend
-#   Full editable dataset (hidden) 
