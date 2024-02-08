@@ -23,10 +23,17 @@ def save_to_csv(dfToSave):
 def refresh():
     st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
+    st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 
 edited_df = st.data_editor(st.session_state.df, num_rows="dynamic", use_container_width=True)
+
+incol1, incol2 = st.columns(2)
+with incol1:
 # Button to save the edited data to a CSV file
-if st.button(label="Save data_editor to CSV", type="primary"):
-    save_to_csv(edited_df)
-    refresh()
-    st.rerun()
+    if st.button(label="Save to database", type="primary"):
+        save_to_csv(edited_df)
+        refresh()
+# Button to refresh data from DB
+with incol2:
+    if st.button(label="REFRESH", type="secondary"):
+        refresh()

@@ -15,25 +15,26 @@ dt_iso = date.isoformat()
 dt_string = date.strftime("%Y-%m-%d %H:%M:%S")
 t_string = date.strftime("%H:%M")
 d_string = date.strftime("%d-%m-%Y")
+
 # df = pd.DataFrame.empty
 # Get data from csv
 df = pd.DataFrame()
 edited_df = pd.DataFrame()
 if "df" not in st.session_state:
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
-    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
+    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
 st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 
-def refresh():
-    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
-    # st.session_state.df = pd.read_csv("data.csv",index_col=False)
 #Functions:
+def refresh():
+    st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
+    # st.session_state.df = pd.read_csv("data.csv",index_col=False)
+    st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 # Function to add a new row to the DataFrame
 def addRow(date, field1, field2, oldTable):
     newRow = pd.DataFrame([[date, field1, field2]], columns=["Date & Time", "BB", "Bowie"])
     st.session_state.df = pd.concat([oldTable, newRow], ignore_index=True)
     st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) 
-    # st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
 # Function to save the DataFrame to a CSV file
 def save_to_csv(dfToSave):
     if not dfToSave.empty:
@@ -41,8 +42,7 @@ def save_to_csv(dfToSave):
         conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
         with conn.open("birdsandweighbucket/data.csv", "wt") as f:
             dfToSave.to_csv(f, index=False)
-        
-        st.warning("Data saved to data.csv")
+        st.warning("Data saved to database!")
     # Display a link to download the CSV file
         st.download_button(
             label="Download CSV",
@@ -55,8 +55,6 @@ def save_to_csv(dfToSave):
         
 
 def display_plot(data):
-    # fig = px.line(data, x="Date & Time", y=["BB", "Bowie"], range_y=[0, 100])
-    # st.plotly_chart(fig)
     st.line_chart(data, x="Date & Time", y=["BB", "Bowie"])
 
 st.title(":hatched_chick: Birds&Weigh :baby_chick:")
@@ -76,17 +74,23 @@ with col1:
         addRow(date, field1, field2, st.session_state.df)
         st.warning(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
     if deleteButton:
-        st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset: ")
+        st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
-# Button to save the edited data to a CSV file
-    if st.button(label="Save to CSV", type="primary"):
-        save_to_csv(st.session_state.df)
+    incol1, incol2 = st.columns(2)
+    # Button to save the edited data to a CSV file
+    with incol1:
+        if st.button(label="Save to CSV", type="primary"):
+            save_to_csv(st.session_state.df)
+    # Button to refresh data from DB
+    with incol2:
+        if st.button(label="REFRESH", type="secondary"):
+            refresh()
 
-# st.write(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
+
 with col2:
-    st.write("### Data Table")
-    st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
+    st.write("####")
     st.write(f"Today's date: {d_string}")
+    st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
     st.dataframe(st.session_state.df[-7:])
     maxBB = st.session_state.df.max()["BB"]
     maxBowie = st.session_state.df.max()["Bowie"]
