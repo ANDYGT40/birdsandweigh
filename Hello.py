@@ -92,8 +92,8 @@ with col2:
     st.write(f"Today's date: {d_string}")
     st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
     st.dataframe(st.session_state.df[-7:])
-    maxBB = st.session_state.df.max(step=1)["BB"]
-    maxBowie = st.session_state.df.max(step=1)["Bowie"]
+    maxBB = st.session_state.df.max()["BB"]
+    maxBowie = st.session_state.df.max()["Bowie"]
     st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
 
 
@@ -108,13 +108,13 @@ ts = st.session_state.df.set_index('Date & Time')
 morn = ts.between_time('0:00','12:00')
 night = ts.between_time('12:00','23:00')
 st.write("### Morning")
-maxMornBB = morn.max(step=1)["BB"]
-maxMornBowie = morn.max(step=1)["Bowie"]
+maxMornBB = morn.max()["BB"]
+maxMornBowie = morn.max()["Bowie"]
 st.write(f"Max morning weight BB:{maxMornBB}, Bowie:{maxMornBowie}")
 st.line_chart(morn,y=["BB", "Bowie"])
 st.write("### Night")
-maxNightBB = night.max(step=1)["BB"]
-maxNightBowie = night.max(step=1)["Bowie"]
+maxNightBB = night.max()["BB"]
+maxNightBowie = night.max()["Bowie"]
 st.write(f"Max night weight BB:{maxNightBB}, Bowie:{maxNightBowie}")
 st.line_chart(night,y=["BB", "Bowie"])
 
