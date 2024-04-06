@@ -42,7 +42,7 @@ def save_to_csv(dfToSave):
         conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
         with conn.open("birdsandweighbucket/data.csv", "wt") as f:
             dfToSave.to_csv(f, index=False)
-        st.warning("Data saved to database!")
+        st.success("Data saved to database!", icon="✅")
     # Display a link to download the CSV file
         st.download_button(
             label="Download CSV",
@@ -72,7 +72,7 @@ with col1:
         deleteButton = st.form_submit_button("Delete last row")
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
-        st.warning(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
+        st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
@@ -95,6 +95,15 @@ with col2:
     maxBB = st.session_state.df.max()["BB"]
     maxBowie = st.session_state.df.max()["Bowie"]
     st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
+
+    varienceBB = st.session_state.df[-7:].max()["BB"] - st.session_state.df[-7:].min()["BB"]
+    trendBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].max()["BB"]
+    varienceBowie = st.session_state.df[-7:].max()["Bowie"] - st.session_state.df[-7:].min()["Bowie"]
+    trendBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].max()["Bowie"]
+    st.write(varienceBB)
+    st.write(trendBB)
+    st.write(varienceBowie)
+    st.write(trendBowie)
 
 
 #Below columns
