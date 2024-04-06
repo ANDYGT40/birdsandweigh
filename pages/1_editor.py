@@ -19,7 +19,7 @@ def save_to_csv(dfToSave):
         conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
         with conn.open("birdsandweighbucket/data.csv", "wt") as f:
             dfToSave.to_csv(f, index=False)
-    st.warning("Edited data saved to data.csv")
+    st.success("Edited data saved to database!", icon = "✅")
 def refresh():
     st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
