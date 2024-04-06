@@ -95,15 +95,15 @@ with col2:
     maxBB = st.session_state.df.max()["BB"]
     maxBowie = st.session_state.df.max()["Bowie"]
     st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
-
-    varienceBB = st.session_state.df[-7:].max()["BB"] - st.session_state.df[-7:].min()["BB"]
-    trendBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].max()["BB"]
-    varienceBowie = st.session_state.df[-7:].max()["Bowie"] - st.session_state.df[-7:].min()["Bowie"]
-    trendBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].max()["Bowie"]
-    st.write(varienceBB)
-    st.write(trendBB)
-    st.write(varienceBowie)
-    st.write(trendBowie)
+# Not working
+    # varienceBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
+    # trendBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
+    # varienceBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].avg()["Bowie"]
+    # trendBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].avg()["Bowie"]
+    # st.write(varienceBB)
+    # st.write(trendBB)
+    # st.write(varienceBowie)
+    # st.write(trendBowie)
 
 
 #Below columns
