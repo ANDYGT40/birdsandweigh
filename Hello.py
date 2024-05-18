@@ -80,7 +80,7 @@ with col1:
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
         save_to_db(st.session_state.df)
     if refreshButton:
-            refresh()
+        refresh()
 
 with col2:
     st.write("####")
