@@ -2,11 +2,13 @@ import streamlit as st
 import pandas as pd
 from st_files_connection import FilesConnection
 import gcsfs as gcsfs
+
 # Create connection object and retrieve file contents.
 conn = st.connection('gcs', type=FilesConnection)
-
+st.cache_data.clear()
 df = pd.DataFrame()
 edited_df = pd.DataFrame()
+
 if "df" not in st.session_state:
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
     st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
@@ -21,6 +23,7 @@ def save_to_db(dfToSave):
             dfToSave.to_csv(f, index=False)
     st.success("Edited data saved to database!", icon = "✅")
 def refresh():
+    st.cache_data.clear()
     st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv")
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
     st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
