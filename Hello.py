@@ -69,7 +69,7 @@ with col1:
         field2 = st.number_input("Bowie", step=1)
         submitButton = st.form_submit_button("Add Row", type="primary")
         deleteButton = st.form_submit_button("Delete last row")
-        refreshButton = st.button(label="REFRESH", type="secondary")
+        refreshButton = st.form_submit_button(label="REFRESH")
 
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
