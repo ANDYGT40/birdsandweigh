@@ -74,7 +74,7 @@ with col1:
         field2 = st.number_input("Bowie", step=1)
         submitButton = st.form_submit_button("Add Row", type="primary")
         deleteButton = st.form_submit_button("Delete last row")
-        refreshButton = st.form_submit_button(label="REFRESH")
+        # refreshButton = st.form_submit_button(label="REFRESH")
 #Buttons
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
@@ -86,8 +86,8 @@ with col1:
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
         save_to_db(st.session_state.df)
 
-    if refreshButton:
-        refresh()
+    # if refreshButton:
+    #     refresh()
 #Mini Table
 with col2:
     st.write("####")
