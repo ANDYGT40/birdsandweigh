@@ -35,7 +35,7 @@ def addRow(date, field1, field2, oldTable):
     st.session_state.df = pd.concat([oldTable, newRow], ignore_index=True)
     st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) 
 # Function to save the DataFrame to a CSV file
-def save_to_csv(dfToSave):
+def save_to_db(dfToSave):
     if not dfToSave.empty:
         # dfToSave.to_csv("data.csv", index=False, encoding="utf-8") #Save local csv
         conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
@@ -67,20 +67,21 @@ with col1:
         date = st.text_input("Date & Time", value=dt_string)
         field1 = st.number_input("BB", step=1)
         field2 = st.number_input("Bowie", step=1)
-        submitButton = st.form_submit_button("Add Row")
+        submitButton = st.form_submit_button("Add Row", type="primary")
         deleteButton = st.form_submit_button("Delete last row")
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
-        save_to_csv(st.session_state.df)
+        save_to_db(st.session_state.df)
         st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}", icon="✅")
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
+        save_to_db(st.session_state.df)
     incol1, incol2 = st.columns(2)
     # Button to save the edited data to a CSV file
     # with incol1:
     #     if st.button(label="Save to Database", type="primary"):
-    #         save_to_csv(st.session_state.df)
+    #         save_to_db(st.session_state.df)
     # Button to refresh data from DB
     with incol2:
         if st.button(label="REFRESH", type="secondary"):
