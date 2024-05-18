@@ -15,6 +15,7 @@ dt_iso = date.isoformat()
 dt_string = date.strftime("%Y-%m-%d %H:%M:%S")
 t_string = date.strftime("%H:%M")
 d_string = date.strftime("%d-%m-%Y")
+st.cache_data.clear()
 
 # Load from db
 df = pd.DataFrame() #empty df
@@ -25,6 +26,7 @@ st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & 
 
 #Functions:
 def refresh():
+    st.cache_data.clear()
     st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
     st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
@@ -74,7 +76,7 @@ with col1:
         field2 = st.number_input("Bowie", step=1)
         submitButton = st.form_submit_button("Add Row", type="primary")
         deleteButton = st.form_submit_button("Delete last row")
-        # refreshButton = st.form_submit_button(label="REFRESH")
+        refreshButton = st.form_submit_button(label="REFRESH")
 #Buttons
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
@@ -86,8 +88,8 @@ with col1:
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
         save_to_db(st.session_state.df)
 
-    # if refreshButton:
-    #     refresh()
+    if refreshButton:
+        refresh()
 #Mini Table
 with col2:
     st.write("####")
