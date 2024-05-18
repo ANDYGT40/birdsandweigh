@@ -94,9 +94,7 @@ with col2:
     st.write(f"Today's date: {d_string}")
     st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
     st.dataframe(st.session_state.df[-7:])
-    refreshButton = st.form_submit_button(label="REFRESH")
-    if refreshButton:
-        refresh()
+    st.button(label="REFRESH", on_click=refresh())
     maxBB = st.session_state.df.max()["BB"]
     maxBowie = st.session_state.df.max()["Bowie"]
     st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
