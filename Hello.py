@@ -69,24 +69,18 @@ with col1:
         field2 = st.number_input("Bowie", step=1)
         submitButton = st.form_submit_button("Add Row", type="primary")
         deleteButton = st.form_submit_button("Delete last row")
+        refreshButton = st.button(label="REFRESH", type="secondary")
+
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
         save_to_db(st.session_state.df)
-        st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}", icon="✅")
+        st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
         save_to_db(st.session_state.df)
-    incol1, incol2 = st.columns(2)
-    # Button to save the edited data to a CSV file
-    # with incol1:
-    #     if st.button(label="Save to Database", type="primary"):
-    #         save_to_db(st.session_state.df)
-    # Button to refresh data from DB
-    with incol2:
-        if st.button(label="REFRESH", type="secondary"):
+    if refreshButton:
             refresh()
-
 
 with col2:
     st.write("####")
