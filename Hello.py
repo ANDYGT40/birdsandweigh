@@ -41,7 +41,7 @@ def save_to_db(dfToSave):
         conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
         with conn.open("birdsandweighbucket/data.csv", "wt") as f:
             dfToSave.to_csv(f, index=False)
-        st.success("Data saved to database!", icon="✅")
+        # st.success("Data saved to database!", icon="✅")
     # Display a link to download the CSV file
         st.download_button(
             label="Download CSV",
@@ -74,11 +74,13 @@ with col1:
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
         save_to_db(st.session_state.df)
+        refresh()
         st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
         save_to_db(st.session_state.df)
+        refresh()
     if refreshButton:
         refresh()
 

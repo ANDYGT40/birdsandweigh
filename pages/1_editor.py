@@ -13,7 +13,7 @@ if "df" not in st.session_state:
 st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
 
 # Function to save the DataFrame to a CSV file
-def save_to_csv(dfToSave):
+def save_to_db(dfToSave):
     if not dfToSave.empty:
         # dfToSave.to_csv("data.csv", index=False, encoding="utf-8") #Save local csv
         conn.open("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
@@ -31,7 +31,7 @@ incol1, incol2 = st.columns(2)
 with incol1:
 # Button to save the edited data to a CSV file
     if st.button(label="Save to database", type="primary"):
-        save_to_csv(edited_df)
+        save_to_db(edited_df)
         refresh()
 # Button to refresh data from DB
 with incol2:
