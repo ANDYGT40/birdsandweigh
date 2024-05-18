@@ -16,9 +16,8 @@ dt_string = date.strftime("%Y-%m-%d %H:%M:%S")
 t_string = date.strftime("%H:%M")
 d_string = date.strftime("%d-%m-%Y")
 
-# Get data from csv
-df = pd.DataFrame()
-edited_df = pd.DataFrame()
+# Load from db
+df = pd.DataFrame() #empty df
 if "df" not in st.session_state:
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
     st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
@@ -29,12 +28,14 @@ def refresh():
     st.session_state.df = conn.read("birdsandweighbucket/data.csv",index_col=False, input_format="csv", ttl=600)
     # st.session_state.df = pd.read_csv("data.csv",index_col=False)
     st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) ##FIX FORMAT
+
 # Function to add a new row to the DataFrame
 def addRow(date, field1, field2, oldTable):
     newRow = pd.DataFrame([[date, field1, field2]], columns=["Date & Time", "BB", "Bowie"])
     st.session_state.df = pd.concat([oldTable, newRow], ignore_index=True)
     st.session_state.df['Date & Time'] = pd.to_datetime(st.session_state.df['Date & Time']) 
-# Function to save the DataFrame to a CSV file
+
+# Function to save the DataFrame to a DB and diplay Download button
 def save_to_db(dfToSave):
     if not dfToSave.empty:
         # dfToSave.to_csv("data.csv", index=False, encoding="utf-8") #Save local csv
@@ -42,7 +43,7 @@ def save_to_db(dfToSave):
         with conn.open("birdsandweighbucket/data.csv", "wt") as f:
             dfToSave.to_csv(f, index=False)
         # st.success("Data saved to database!", icon="✅")
-    # Display a link to download the CSV file
+# Display a link to download the CSV file
         st.download_button(
             label="Download CSV",
             data=dfToSave.to_csv(index=False).encode('utf-8'),
@@ -51,16 +52,20 @@ def save_to_db(dfToSave):
         )
     else:
         st.warning('DataFrame Empty!')
-        
 
 def display_plot(data):
     st.line_chart(data, x="Date & Time", y=["BB", "Bowie"])
+
+
+#DISPLAY SECTION
 
 st.title(":hatched_chick: Birds&Weigh :baby_chick:")
 
 #Containers
 col1, col2 = st.columns(2)
-#Display
+
+
+#Input Form
 with col1:
     st.write("### Data Input")
     with st.form("addRow_form"):
@@ -70,20 +75,20 @@ with col1:
         submitButton = st.form_submit_button("Add Row", type="primary")
         deleteButton = st.form_submit_button("Delete last row")
         refreshButton = st.form_submit_button(label="REFRESH")
-
+#Buttons
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
         save_to_db(st.session_state.df)
-        refresh()
+
         st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
         save_to_db(st.session_state.df)
-        refresh()
+
     if refreshButton:
         refresh()
-
+#Mini Table
 with col2:
     st.write("####")
     st.write(f"Today's date: {d_string}")
@@ -103,7 +108,7 @@ with col2:
     # st.write(trendBowie)
 
 
-#Below columns
+#Big Plots
 st.write("### All Measurements")
 display_plot(st.session_state.df)
 #st.write(st.session_state.df.dtypes) #Check Types
