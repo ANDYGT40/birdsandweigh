@@ -16,7 +16,6 @@ dt_string = date.strftime("%Y-%m-%d %H:%M:%S")
 t_string = date.strftime("%H:%M")
 d_string = date.strftime("%d-%m-%Y")
 
-# df = pd.DataFrame.empty
 # Get data from csv
 df = pd.DataFrame()
 edited_df = pd.DataFrame()
@@ -72,15 +71,16 @@ with col1:
         deleteButton = st.form_submit_button("Delete last row")
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
-        st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
+        save_to_csv(st.session_state.df)
+        st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}", icon="✅")
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
     incol1, incol2 = st.columns(2)
     # Button to save the edited data to a CSV file
-    with incol1:
-        if st.button(label="Save to Database", type="primary"):
-            save_to_csv(st.session_state.df)
+    # with incol1:
+    #     if st.button(label="Save to Database", type="primary"):
+    #         save_to_csv(st.session_state.df)
     # Button to refresh data from DB
     with incol2:
         if st.button(label="REFRESH", type="secondary"):
@@ -95,7 +95,7 @@ with col2:
     maxBB = st.session_state.df.max()["BB"]
     maxBowie = st.session_state.df.max()["Bowie"]
     st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
-# Not working
+# Not working additional functions
     # varienceBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
     # trendBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
     # varienceBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].avg()["Bowie"]
