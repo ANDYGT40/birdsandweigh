@@ -110,7 +110,7 @@ with col2:
     # st.write(trendBB)
     # st.write(varienceBowie)
     # st.write(trendBowie)
-    st.write("Avg. last 7 days - BB:"avgBB)
+    st.write(f"Avg. last 7 days - BB:{avgBB}")
 
 
 #Big Plots
