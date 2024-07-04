@@ -105,7 +105,7 @@ with col2:
     # trendBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
     # varienceBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].avg()["Bowie"]
     # trendBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].avg()["Bowie"]
-    avgBB = st.session_state.df[-7:].avg()["BB"]
+    avgBB = st.session_state.df[-7:].avg()
     # st.write(varienceBB)
     # st.write(trendBB)
     # st.write(varienceBowie)
