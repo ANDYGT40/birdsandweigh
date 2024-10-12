@@ -114,16 +114,20 @@ with col2:
     avg_last_7_days_Bowie = round(st.session_state.df[-7:].mean()["Bowie"],1)
     st.write(f"Avg. last 7 days - BB: {avg_last_7_days_BB}, Bowie: {avg_last_7_days_Bowie}")
     
-    # Calculate trend
-    trend_BB = (st.session_state.df[-7:].mean()["BB"] - st.session_state.df[-14:-7].mean()["BB"]) / (st.session_state.df[-14:-7].mean()["BB"]) * 100
-    trend_Bowie = (st.session_state.df[-7:].mean()["Bowie"] - st.session_state.df[-14:-7].mean()["Bowie"]) / (st.session_state.df[-14:-7].mean()["Bowie"]) * 100
-    st.write(f"Trend last 7 days - BB: {trend_BB:.2f}%, Bowie: {trend_Bowie:.2f}%")
-    
     # Calculate percentage change
     percent_change_BB = ((st.session_state.df[-7:].mean()["BB"] / st.session_state.df[-14:-7].mean()["BB"]) - 1) * 100
     percent_change_Bowie = ((st.session_state.df[-7:].mean()["Bowie"] / st.session_state.df[-14:-7].mean()["Bowie"]) - 1) * 100
-    st.write(f"Percentage change last 7 days - BB: {percent_change_BB:.2f}%, Bowie: {percent_change_Bowie:.2f}%")
+    st.write(f"% change last 7 days - BB: {percent_change_BB:.2f}%, Bowie: {percent_change_Bowie:.2f}%")
 
+    #metrics BB
+    st.write("BB Metrics")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Max all time", maxBB)
+    col2.metric("7 day Avg.", avg_last_7_days_BB)
+    col3.metric("7 day %Change", f"{percent_change_BB:.2f}%")
+
+    # Metrics Bowie
+    
 # Not working additional functions
     # varienceBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
     # trendBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
