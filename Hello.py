@@ -60,7 +60,9 @@ def display_plot(data):
 # Calculate percentage change
 percent_change_day_BB = ((st.session_state.df[-1:]["BB"] / st.session_state.df[-2:-1]["BB"]) - 1) * 100
 percent_change_day_Bowie = ((st.session_state.df[-1:]["Bowie"] / st.session_state.df[-2:-1]["Bowie"]) - 1) * 100
-
+col1, col2 = st.columns(2)
+col1.st.metric("BB", f"{st.session_state.df[-1:]["BB"]}g", f"{percent_change_day_BB:.2f}%")
+col2.st.metric("Bowie", f"{st.session_state.df[-1:]["Bowie"]}g", f"{percent_change_day_Bowie:.2f}%")
 
 #DISPLAY SECTION
 
@@ -112,9 +114,8 @@ with col2:
     percent_change_BB = ((st.session_state.df[-7:].mean()["BB"] / st.session_state.df[-14:-7].mean()["BB"]) - 1) * 100
     percent_change_Bowie = ((st.session_state.df[-7:].mean()["Bowie"] / st.session_state.df[-14:-7].mean()["Bowie"]) - 1) * 100
     st.write(f"% change last 7 days - BB: {percent_change_BB:.2f}%, Bowie: {percent_change_Bowie:.2f}%")
-    col1, col2 = st.columns(2)
-    col1.st.metric("BB", f"{st.session_state.df[-1:]["BB"]}g", f"{percent_change_day_BB:.2f}%")
-    col2.st.metric("Bowie", f"{st.session_state.df[-1:]["Bowie"]}g", f"{percent_change_day_Bowie:.2f}%")
+
+
     #metrics BB
     col1, col2, col3 = st.columns(3)
     col1.write("BB Metrics")
