@@ -81,23 +81,20 @@ with col1:
         addRow(date, field1, field2, st.session_state.df)
         save_to_db(st.session_state.df)
 
+        # Calculate percentage change
+        percent_change_day_BB = ((field1 / st.session_state.df[-1:]["BB"]) - 1) * 100
+        percent_change_day_Bowie = ((field2 / st.session_state.df[-1:]["Bowie"]) - 1) * 100
         st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
+        col1, col2 = st.columns(2)
+        col1.st.metric("BB", f"{field1}g", f"{percent_change_day_BB:.2f}%")
+        col2.st.metric("Bowie", f"{field2}g", f"{percent_change_day_Bowie:.2f}%")
+
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
         save_to_db(st.session_state.df)
 
 #Mini Table
-# with col2:
-#     st.write("####")
-#     st.write(f"Today's date: {d_string}")
-#     st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
-#     st.dataframe(st.session_state.df[-7:])
-#     st.button(label="REFRESH", on_click=refresh())
-#     maxBB = st.session_state.df.max()["BB"]
-#     maxBowie = st.session_state.df.max()["Bowie"]
-#     st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
-
 with col2:
     st.write("####")
     st.write(f"Today's date: {d_string}")
@@ -114,31 +111,22 @@ with col2:
     avg_last_7_days_Bowie = round(st.session_state.df[-7:].mean()["Bowie"],1)
     st.write(f"Avg. last 7 days - BB: {avg_last_7_days_BB}, Bowie: {avg_last_7_days_Bowie}")
     
-    # Calculate percentage change
+    # Calculate percentage change weekly
     percent_change_BB = ((st.session_state.df[-7:].mean()["BB"] / st.session_state.df[-14:-7].mean()["BB"]) - 1) * 100
     percent_change_Bowie = ((st.session_state.df[-7:].mean()["Bowie"] / st.session_state.df[-14:-7].mean()["Bowie"]) - 1) * 100
     st.write(f"% change last 7 days - BB: {percent_change_BB:.2f}%, Bowie: {percent_change_Bowie:.2f}%")
 
     #metrics BB
-    st.write("BB Metrics")
     col1, col2, col3 = st.columns(3)
-    col1.metric("Max all time", maxBB)
-    col2.metric("7 day Avg.", avg_last_7_days_BB)
-    col3.metric("7 day %Change", f"{percent_change_BB:.2f}%")
+    col1.write("BB Metrics")
+    col2.metric("Max all time", maxBB)
+    col3.metric("7 day Avg.", avg_last_7_days_BB, f"{percent_change_BB:.2f}%")
 
     # Metrics Bowie
-    
-# Not working additional functions
-    # varienceBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
-    # trendBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
-    # varienceBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].avg()["Bowie"]
-    # trendBowie = st.session_state.df[-7:].avg()["Bowie"] - st.session_state.df[-14:-7].avg()["Bowie"]
-    # avgBB = st.session_state.df[-7:].avg()
-    # st.write(varienceBB)
-    # st.write(trendBB)
-    # st.write(varienceBowie)
-    # st.write(trendBowie)
-    # st.write(f"Avg. last 7 days - BB:{avgBB}")
+    col1, col2, col3 = st.columns(3)
+    col1.write("Bowie Metrics")
+    col2.metric("Max all time", maxBowie)
+    col3.metric("7 day Avg.", avg_last_7_days_Bowie, f"{percent_change_Bowie:.2f}%")
 
 
 #Big Plots
