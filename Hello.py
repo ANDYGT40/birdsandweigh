@@ -57,6 +57,10 @@ def save_to_db(dfToSave):
 def display_plot(data):
     st.line_chart(data, x="Date & Time", y=["BB", "Bowie"])
 
+# Calculate percentage change
+percent_change_day_BB = ((st.session_state.df[-1:]["BB"] / st.session_state.df[-2:-1]["BB"]) - 1) * 100
+percent_change_day_Bowie = ((st.session_state.df[-1:]["Bowie"] / st.session_state.df[-2:-1]["Bowie"]) - 1) * 100
+
 
 #DISPLAY SECTION
 
@@ -80,14 +84,7 @@ with col1:
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
         save_to_db(st.session_state.df)
-
-        # Calculate percentage change
-        percent_change_day_BB = ((field1 / st.session_state.df[-1:]["BB"]) - 1) * 100
-        percent_change_day_Bowie = ((field2 / st.session_state.df[-1:]["Bowie"]) - 1) * 100
         st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
-        col1, col2 = st.columns(2)
-        col1.st.metric("BB", f"{field1}g", f"{percent_change_day_BB:.2f}%")
-        col2.st.metric("Bowie", f"{field2}g", f"{percent_change_day_Bowie:.2f}%")
 
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
@@ -115,7 +112,9 @@ with col2:
     percent_change_BB = ((st.session_state.df[-7:].mean()["BB"] / st.session_state.df[-14:-7].mean()["BB"]) - 1) * 100
     percent_change_Bowie = ((st.session_state.df[-7:].mean()["Bowie"] / st.session_state.df[-14:-7].mean()["Bowie"]) - 1) * 100
     st.write(f"% change last 7 days - BB: {percent_change_BB:.2f}%, Bowie: {percent_change_Bowie:.2f}%")
-
+    col1, col2 = st.columns(2)
+    col1.st.metric("BB", f"{st.session_state.df[-1:]["BB"]}g", f"{percent_change_day_BB:.2f}%")
+    col2.st.metric("Bowie", f"{st.session_state.df[-1:]["Bowie"]}g", f"{percent_change_day_Bowie:.2f}%")
     #metrics BB
     col1, col2, col3 = st.columns(3)
     col1.write("BB Metrics")
