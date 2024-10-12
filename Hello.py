@@ -110,14 +110,14 @@ with col2:
     percent_change_day_Bowie = ((st.session_state.df.iloc[-1]["Bowie"] - st.session_state.df.iloc[-2]["Bowie"]) / st.session_state.df.iloc[-2]["Bowie"]) * 100     
 
     #metrics BB
-    col1, col2, col3, col4 = st.columns([1,3])
+    col1, col2, col3, col4 = st.columns([1,3,3,3])
     col1.write("BB")
     col2.metric("BB", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
     col3.metric("Max all time", maxBB)
     col4.metric("7 day Avg.", avg_last_7_days_BB, f"{percent_change_BB:.2f}%")
 
     # Metrics Bowie
-    col1, col2, col3, col4 = st.columns([1,3])
+    col1, col2, col3, col4 = st.columns([1,3,3,3])
     col1.write("Bowie")
     col2.metric("Bowie", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
     col3.metric("Max all time", maxBowie)
