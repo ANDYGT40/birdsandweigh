@@ -88,17 +88,41 @@ with col1:
         save_to_db(st.session_state.df)
 
 #Mini Table
+# with col2:
+#     st.write("####")
+#     st.write(f"Today's date: {d_string}")
+#     st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
+#     st.dataframe(st.session_state.df[-7:])
+#     st.button(label="REFRESH", on_click=refresh())
+#     maxBB = st.session_state.df.max()["BB"]
+#     maxBowie = st.session_state.df.max()["Bowie"]
+#     st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
+
 with col2:
     st.write("####")
     st.write(f"Today's date: {d_string}")
     st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
     st.dataframe(st.session_state.df[-7:])
     st.button(label="REFRESH", on_click=refresh())
+    
     maxBB = st.session_state.df.max()["BB"]
     maxBowie = st.session_state.df.max()["Bowie"]
     st.write(f"Max weight BB:{maxBB}, Bowie:{maxBowie}")
-
-
+    
+    # Calculate average last 7 days
+    avg_last_7_days_BB = st.session_state.df[-7:].mean()["BB"]
+    avg_last_7_days_Bowie = st.session_state.df[-7:].mean()["Bowie"]
+    st.write(f"Avg. last 7 days - BB: {avg_last_7_days_BB}, Bowie: {avg_last_7_days_Bowie}")
+    
+    # Calculate trend
+    trend_BB = (st.session_state.df[-7:].mean()["BB"] - st.session_state.df[-14:-7].mean()["BB"]) / (st.session_state.df[-14:-7].mean()["BB"] * 100)
+    trend_Bowie = (st.session_state.df[-7:].mean()["Bowie"] - st.session_state.df[-14:-7].mean()["Bowie"]) / (st.session_state.df[-14:-7].mean()["Bowie"] * 100)
+    st.write(f"Trend last 7 days - BB: {trend_BB:.2f}%, Bowie: {trend_Bowie:.2f}%")
+    
+    # Calculate percentage change
+    percent_change_BB = ((st.session_state.df[-7:].mean()["BB"] / st.session_state.df[-14:-7].mean()["BB"]) - 1) * 100
+    percent_change_Bowie = ((st.session_state.df[-7:].mean()["Bowie"] / st.session_state.df[-14:-7].mean()["Bowie"]) - 1) * 100
+    st.write(f"Percentage change last 7 days - BB: {percent_change_BB:.2f}%, Bowie: {percent_change_Bowie:.2f}%")
 
 # Not working additional functions
     # varienceBB = st.session_state.df[-7:].avg()["BB"] - st.session_state.df[-14:-7].avg()["BB"]
