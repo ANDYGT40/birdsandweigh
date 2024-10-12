@@ -109,20 +109,18 @@ with col2:
     percent_change_day_BB = ((st.session_state.df.iloc[-1]["BB"] - st.session_state.df.iloc[-2]["BB"]) / st.session_state.df.iloc[-2]["BB"]) * 100
     percent_change_day_Bowie = ((st.session_state.df.iloc[-1]["Bowie"] - st.session_state.df.iloc[-2]["Bowie"]) / st.session_state.df.iloc[-2]["Bowie"]) * 100     
 
-    #metrics BB
-    col1, col2, col3, col4 = st.columns([2,3,3,3])
-    col1.write("BB")
-    col2.metric("BB", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
-    col3.metric("Max all time", f"{maxBB}g")
-    col4.metric("7 day Avg.", f"{avg_last_7_days_BB}g", f"{percent_change_BB:.2f}%")
-
-    # Metrics Bowie
-    col1, col2, col3, col4 = st.columns([2,3,3,3])
-    col1.write("Bowie")
-    col2.metric("Bowie", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
-    col3.metric("Max all time", f"{maxBowie}g")
-    col4.metric("7 day Avg.", f"{avg_last_7_days_Bowie}g", f"{percent_change_Bowie:.2f}%")
-
+#metrics BB
+col1, col2, col3, col4 = st.columns([2,3,3,3])
+col1.write("BB")
+col2.metric("BB", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
+col3.metric("Max all time", f"{maxBB}g")
+col4.metric("7 day Avg.", f"{avg_last_7_days_BB}g", f"{percent_change_BB:.2f}%")
+# Metrics Bowie
+col1, col2, col3, col4 = st.columns([2,3,3,3])
+col1.write("Bowie")
+col2.metric("Bowie", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
+col3.metric("Max all time", f"{maxBowie}g")
+col4.metric("7 day Avg.", f"{avg_last_7_days_Bowie}g", f"{percent_change_Bowie:.2f}%")
 
 #Big Plots
 st.write("### All Measurements")
