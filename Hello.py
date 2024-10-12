@@ -112,9 +112,11 @@ with col2:
     percent_change_day_BB = ((st.session_state.df.iloc[-1]["BB"] - st.session_state.df.iloc[-2]["BB"]) / st.session_state.df.iloc[-2]["BB"]) * 100
     percent_change_day_Bowie = ((st.session_state.df.iloc[-1]["Bowie"] - st.session_state.df.iloc[-2]["Bowie"]) / st.session_state.df.iloc[-2]["Bowie"]) * 100
 
-    col1a, col2a = st.columns(2)
-    col1a.st.metric("BB", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
-    col2a.st.metric("Bowie", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("BB", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
+    with col2:
+        st.metric("Bowie", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
 
     #metrics BB
     col1, col2, col3 = st.columns(3)
