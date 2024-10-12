@@ -112,14 +112,14 @@ with col2:
     #metrics BB
     col1, col2, col3, col4 = st.columns(4)
     col1.write("BB")
-    col2.st.metric("BB", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
+    col2.metric("BB", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
     col3.metric("Max all time", maxBB)
     col4.metric("7 day Avg.", avg_last_7_days_BB, f"{percent_change_BB:.2f}%")
 
     # Metrics Bowie
     col1, col2, col3, col4 = st.columns(4)
     col1.write("Bowie")
-    col2.st.metric("Bowie", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
+    col2.metric("Bowie", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
     col3.metric("Max all time", maxBowie)
     col4.metric("7 day Avg.", avg_last_7_days_Bowie, f"{percent_change_Bowie:.2f}%")
 
