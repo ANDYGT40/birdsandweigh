@@ -4,6 +4,7 @@ from datetime import datetime
 from st_files_connection import FilesConnection
 import gcsfs as gcsfs
 import pytz as pytz
+import altair as alt
 # Create connection object and retrieve file contents.
 conn = st.connection('gcs', type=FilesConnection)
 
@@ -55,7 +56,18 @@ def save_to_db(dfToSave):
         st.warning('DataFrame Empty!')
 
 def display_plot(data):
-    st.line_chart(data, x="Date & Time", y=["BB", "Bowie"],)
+    # st.line_chart(data, x="Date & Time", y=["BB", "Bowie"])
+    # Melt the data to create a long-form dataset
+    melted_data = pd.melt(data, id_vars='Date & Time', value_vars=['BB', 'Bowie'])
+
+    # Create the line chart
+    chart = alt.Chart(melted_data).mark_line().encode(
+        x='Date & Time',
+        y=alt.Y('value', scale=alt.Scale(domain=[50, 90])),
+        color='variable'
+        
+    )
+    st.altair_chart(chart, theme= "streamlit", use_container_width=True)
 
 #DISPLAY SECTION
 
@@ -128,21 +140,22 @@ st.write("### All Measurements")
 display_plot(st.session_state.df)
 #st.write(st.session_state.df.dtypes) #Check Types
 
-#split data into morning and night
-ts = st.session_state.df.set_index('Date & Time')
-#st.write(ts.dtypes) #Check Types
-morn = ts.between_time('0:00','12:00')
-night = ts.between_time('12:00','23:00')
-st.write("### Morning")
-maxMornBB = morn.max()["BB"]
-maxMornBowie = morn.max()["Bowie"]
-st.write(f"Max morning weight :blue[BB]:{maxMornBB}, :rainbow[Bowie]:{maxMornBowie}")
-st.line_chart(morn,y=["BB", "Bowie"])
-st.write("### Night")
-maxNightBB = night.max()["BB"]
-maxNightBowie = night.max()["Bowie"]
-st.write(f"Max night weight :blue[BB]:{maxNightBB}, :rainbow[Bowie]:{maxNightBowie}")
-st.line_chart(night,y=["BB", "Bowie"])
+with st.expander("morning and night"):
+    #split data into morning and night
+    ts = st.session_state.df.set_index('Date & Time')
+    #st.write(ts.dtypes) #Check Types
+    morn = ts.between_time('0:00','12:00')
+    night = ts.between_time('12:00','23:00')
+    st.write("### Morning")
+    maxMornBB = morn.max()["BB"]
+    maxMornBowie = morn.max()["Bowie"]
+    st.write(f"Max morning weight :blue[BB]:{maxMornBB}, :rainbow[Bowie]:{maxMornBowie}")
+    st.line_chart(morn,y=["BB", "Bowie"])
+    st.write("### Night")
+    maxNightBB = night.max()["BB"]
+    maxNightBowie = night.max()["Bowie"]
+    st.write(f"Max night weight :blue[BB]:{maxNightBB}, :rainbow[Bowie]:{maxNightBowie}")
+    st.line_chart(night,y=["BB", "Bowie"])
 
 
 
