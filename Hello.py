@@ -70,8 +70,8 @@ with col1:
     st.write("### Data Input")
     with st.form("addRow_form"):
         date = st.text_input("Date & Time", value=dt_string)
-        field1 = st.number_input("BB", step=1)
-        field2 = st.number_input("Bowie", step=1)
+        field1 = st.number_input(":blue[BB]", step=1)
+        field2 = st.number_input(":rainbow[Bowie]", step=1)
 #Buttons
         submitButton = st.form_submit_button("Add Row", type="primary")
         deleteButton = st.form_submit_button("Delete last row")
@@ -79,7 +79,7 @@ with col1:
     if submitButton:# # Add fields to data table and display the added fields
         addRow(date, field1, field2, st.session_state.df)
         save_to_db(st.session_state.df)
-        st.success(f"BB = {field1}g and Bowie = {field2}g. Submitted on {d_string} table at {t_string}")
+        st.success(f":blue[BB] = {field1}g and :rainbow[Bowie] = {field2}g. Submitted on {d_string} table at {t_string}")
 
     if deleteButton:
         st.warning(f"Row {st.session_state.df.index[-1]} dropped from dataset")
@@ -105,6 +105,7 @@ percent_change_day_Bowie = ((st.session_state.df.iloc[-1]["Bowie"] - st.session_
 with col2:
     st.write("####")
     st.write(f"Today's date: {d_string}")
+
     #metrics BB
     col1, col2, col3 = st.columns(3)
     col1.metric(":blue[BB]", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
@@ -135,12 +136,12 @@ night = ts.between_time('12:00','23:00')
 st.write("### Morning")
 maxMornBB = morn.max()["BB"]
 maxMornBowie = morn.max()["Bowie"]
-st.write(f"Max morning weight BB:{maxMornBB}, Bowie:{maxMornBowie}")
+st.write(f"Max morning weight :blue[BB]:{maxMornBB}, :rainbow[Bowie]:{maxMornBowie}")
 st.line_chart(morn,y=["BB", "Bowie"])
 st.write("### Night")
 maxNightBB = night.max()["BB"]
 maxNightBowie = night.max()["Bowie"]
-st.write(f"Max night weight BB:{maxNightBB}, Bowie:{maxNightBowie}")
+st.write(f"Max night weight :blue[BB]:{maxNightBB}, :rainbow[Bowie]:{maxNightBowie}")
 st.line_chart(night,y=["BB", "Bowie"])
 
 
