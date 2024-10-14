@@ -55,7 +55,7 @@ def save_to_db(dfToSave):
         st.warning('DataFrame Empty!')
 
 def display_plot(data):
-    st.line_chart(data, x="Date & Time", y=["BB", "Bowie"])
+    st.line_chart(data, x="Date & Time", y=["BB", "Bowie"],)
 
 #DISPLAY SECTION
 
@@ -86,41 +86,44 @@ with col1:
         st.session_state.df = st.session_state.df.drop(st.session_state.df.index[-1])
         save_to_db(st.session_state.df)
 
+# Calculate max
+maxBB = st.session_state.df.max()["BB"]
+maxBowie = st.session_state.df.max()["Bowie"]
+# Calculate average last 7 days
+avg_last_7_days_BB = round(st.session_state.df[-7:].mean()["BB"],1)
+avg_last_7_days_Bowie = round(st.session_state.df[-7:].mean()["Bowie"],1)
+
+# Calculate percentage change weekly
+percent_change_BB = ((st.session_state.df[-7:].mean()["BB"] / st.session_state.df[-14:-7].mean()["BB"]) - 1) * 100
+percent_change_Bowie = ((st.session_state.df[-7:].mean()["Bowie"] / st.session_state.df[-14:-7].mean()["Bowie"]) - 1) * 100
+
+# Calculate percentage change dayly
+percent_change_day_BB = ((st.session_state.df.iloc[-1]["BB"] - st.session_state.df.iloc[-2]["BB"]) / st.session_state.df.iloc[-2]["BB"]) * 100
+percent_change_day_Bowie = ((st.session_state.df.iloc[-1]["Bowie"] - st.session_state.df.iloc[-2]["Bowie"]) / st.session_state.df.iloc[-2]["Bowie"]) * 100  
+
 #Mini Table
 with col2:
     st.write("####")
     st.write(f"Today's date: {d_string}")
-    st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
-    st.dataframe(st.session_state.df[-7:])
+    #metrics BB
+    col1, col2, col3 = st.columns()
+    col1.metric(":blue[BB]", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
+    col2.metric("Max all time", f"{maxBB}g")
+    col3.metric("7 day Avg.", f"{avg_last_7_days_BB}g", f"{percent_change_BB:.2f}%")
+    # Metrics Bowie
+    col1, col2, col3 = st.columns()
+    col1.metric(":rainbow[Bowie]", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
+    col2.metric("Max all time", f"{maxBowie}g")
+    col3.metric("7 day Avg.", f"{avg_last_7_days_Bowie}g", f"{percent_change_Bowie:.2f}%")
+
+    with st.expander("Last 7 days table"):
+        st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
+        st.dataframe(st.session_state.df[-7:])
     st.button(label="REFRESH", on_click=refresh())
     
-    maxBB = st.session_state.df.max()["BB"]
-    maxBowie = st.session_state.df.max()["Bowie"]
     
-    # Calculate average last 7 days
-    avg_last_7_days_BB = round(st.session_state.df[-7:].mean()["BB"],1)
-    avg_last_7_days_Bowie = round(st.session_state.df[-7:].mean()["Bowie"],1)
-    
-    # Calculate percentage change weekly
-    percent_change_BB = ((st.session_state.df[-7:].mean()["BB"] / st.session_state.df[-14:-7].mean()["BB"]) - 1) * 100
-    percent_change_Bowie = ((st.session_state.df[-7:].mean()["Bowie"] / st.session_state.df[-14:-7].mean()["Bowie"]) - 1) * 100
-    
-    # Calculate percentage change dayly
-    percent_change_day_BB = ((st.session_state.df.iloc[-1]["BB"] - st.session_state.df.iloc[-2]["BB"]) / st.session_state.df.iloc[-2]["BB"]) * 100
-    percent_change_day_Bowie = ((st.session_state.df.iloc[-1]["Bowie"] - st.session_state.df.iloc[-2]["Bowie"]) / st.session_state.df.iloc[-2]["Bowie"]) * 100     
 
-#metrics BB
-col1, col2, col3, col4 = st.columns([2,3,3,3])
-col1.write(":blue[BB]")
-col2.metric("BB", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
-col3.metric("Max all time", f"{maxBB}g")
-col4.metric("7 day Avg.", f"{avg_last_7_days_BB}g", f"{percent_change_BB:.2f}%")
-# Metrics Bowie
-col1, col2, col3, col4 = st.columns([2,3,3,3])
-col1.write(":rainbow[Bowie]")
-col2.metric("Bowie", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
-col3.metric("Max all time", f"{maxBowie}g")
-col4.metric("7 day Avg.", f"{avg_last_7_days_Bowie}g", f"{percent_change_Bowie:.2f}%")
+
 
 #Big Plots
 st.write("### All Measurements")
