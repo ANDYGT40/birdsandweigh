@@ -119,15 +119,13 @@ with col2:
     st.write(f"Today's date: {d_string}")
 
     #metrics BB
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     col1.metric(":blue[BB]", f"{st.session_state.df.iloc[-1]['BB']}g", f"{percent_change_day_BB:.2f}%")
-    col2.metric("Max all time", f"{maxBB}g")
-    col3.metric("7 day Avg.", f"{avg_last_7_days_BB}g", f"{percent_change_BB:.2f}%")
+    col2.metric("7 day Avg.", f"{avg_last_7_days_BB}g", f"{percent_change_BB:.2f}%")
     # Metrics Bowie
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     col1.metric(":rainbow[Bowie]", f"{st.session_state.df.iloc[-1]['Bowie']}g", f"{percent_change_day_Bowie:.2f}%")
-    col2.metric("Max all time", f"{maxBowie}g")
-    col3.metric("7 day Avg.", f"{avg_last_7_days_Bowie}g", f"{percent_change_Bowie:.2f}%")
+    col2.metric("7 day Avg.", f"{avg_last_7_days_Bowie}g", f"{percent_change_Bowie:.2f}%")
     #Mini Table
     with st.expander("Last 7 days table"):
         st.write(f"{len(st.session_state.df)} total rows. Showing last 7 entries") #number of data rows
@@ -137,6 +135,7 @@ with col2:
     
 #Big Plots
 st.write("### All Measurements")
+st.write(f"All time max weight :blue[BB]:{maxBB}, :rainbow[Bowie]:{maxBowie}")
 display_plot(st.session_state.df)
 #st.write(st.session_state.df.dtypes) #Check Types
 
