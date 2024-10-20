@@ -113,7 +113,6 @@ percent_change_Bowie = ((st.session_state.df[-7:].mean()["Bowie"] / st.session_s
 percent_change_day_BB = ((st.session_state.df.iloc[-1]["BB"] - st.session_state.df.iloc[-2]["BB"]) / st.session_state.df.iloc[-2]["BB"]) * 100
 percent_change_day_Bowie = ((st.session_state.df.iloc[-1]["Bowie"] - st.session_state.df.iloc[-2]["Bowie"]) / st.session_state.df.iloc[-2]["Bowie"]) * 100  
 
-
 with col2:
     st.write("####")
     st.write(f"Today's date: {d_string}")
